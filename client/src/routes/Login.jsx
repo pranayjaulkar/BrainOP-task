@@ -21,6 +21,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [code, setCode] = useState("");
   const [disabled, setDisabled] = useState(false);
+  let loginComponentRef = useRef();
   let cloudinaryRef = useRef();
   let uploadWidgetRef = useRef();
   const [validationError, setValidationError] = useState({
@@ -165,7 +166,7 @@ export default function Login() {
           animate(
             scope.current,
             {
-              x: -466,
+              x: -(loginComponentRef.current.clientWidth + 96),
             },
             { ease: "easeOut", duration: 0.8 }
           );
@@ -267,10 +268,14 @@ export default function Login() {
 
   return (
     <div className="flex w-screen h-screen text-gray-300 bg-secondary-300 justify-center urbanist items-center">
-      <div className="bg-secondary-200 border border-gray-800 max-w-[500px] p-16 rounded-md">
-        <div className="overflow-hidden  w-full">
+      <div className="bg-secondary-200 border border-gray-800 max-w-[400px] md:max-w-[600px] xl:max-w-[500px] p-8 md:p-16 rounded-md">
+        <div className="overflow-hidden w-full">
           <div ref={scope} className="flex items-center">
-            <div id="login-signup" className="min-w-[370px]">
+            <div
+              id="login-signup"
+              ref={loginComponentRef}
+              className="min-w-[334px] md:min-w-[470px] xl:min-w-[370px]"
+            >
               <div className="mb-8 flex flex-col space-y-2">
                 <h1 className="text-4xl font-bold w-full text-left text-primary">
                   {login ? "Login" : "Register"}
@@ -300,7 +305,7 @@ export default function Login() {
                 </div>
               </div>
               <div>
-                <label htmlFor="">Upload Profile Picture</label>
+                {!login && <label htmlFor="">Upload Profile Picture</label>}
                 <div className="w-full flex justify-center">
                   {!login && (
                     <div className="relative rounded-full overflow-hidden flex justify-center items-center border-4 border-primary">
@@ -417,7 +422,7 @@ export default function Login() {
             </div>
             <div
               id="verification"
-              className="min-w-[370px] min-h-full ml-24 flex flex-col items-center space-y-6 "
+              className="min-w-[334px] md:min-w-[470px] xl:min-w-[370px] ml-24 flex flex-col items-center space-y-6 "
             >
               <div className="spcae-y-2 flex flex-col justify-center space-y-16">
                 <h2 className="text-center text-7xl text-primary">

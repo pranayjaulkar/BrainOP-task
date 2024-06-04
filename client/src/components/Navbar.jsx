@@ -38,7 +38,7 @@ export default function Navbar() {
       </h2>
       <div className="flex justify-center items-center space-x-6">
         {user && (
-          <Button onClick={handleLogout} className="bg-primary px-4 py-2">
+          <Button onClick={handleLogout} className="bg-primary px-4 py-1 md:px-4 md:py-2">
             Logout
           </Button>
         )}
