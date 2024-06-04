@@ -9,7 +9,6 @@ const postRoutes = require("./routes/post.js");
 const DB_CONNECTION_URL =
   process.env.DATABASE_CONNECTION_URL || "mongodb://127.0.0.1:27017/memories";
 const PORT = process.env.PORT || 5000;
-const SERVER_HOST_ADDRESS = process.env.SERVER_HOST_ADDRESS;
 
 const app = express();
 
@@ -17,7 +16,6 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../client/dist/")));
   app.use(
     cors({
-      origin: SERVER_HOST_ADDRESS,
       credentials: true,
     })
   );
@@ -54,7 +52,6 @@ if (process.env.NODE_ENV === "production") {
 app.all("*", (req, res, next) => {
   next(new customError("Not Found", 404));
 });
-
 
 // handle errors
 app.use((err, req, res, next) => {

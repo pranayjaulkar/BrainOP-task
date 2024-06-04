@@ -30,12 +30,18 @@ export default function Posts() {
   };
 
   const handleError = (err) => {
+    // if there is no response from the server
     if (!err.response || err.code === "ERR_NETWORK") {
       toast.error(err.message);
       toast.error("Server Unavailable");
     } else {
+      // INVALID_JWT for invalid jwt token
+      // TOKEN_EXPIRED for jwt token expired
+      // JWT_NOT_FOUND for jwt token not found in cookie
       const codes = ["INVALID_JWT", "TOKEN_EXPIRED", "JWT_NOT_FOUND"];
+
       if (codes.includes(err.response?.data?.error)) {
+        // navigate to login page
         navigate("/user/login");
       } else if (err.response.status === 500) {
         toast.error("Internal Server Error");
