@@ -30,6 +30,7 @@ export const SignUp = async (userData) => {
     email: userData.email,
     password: userData.password,
     name: userData.name,
+    profilePicture: { url: userData.profilePicture.url },
   });
   return res.data;
 };

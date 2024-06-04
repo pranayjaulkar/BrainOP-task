@@ -4,6 +4,7 @@ import Button from "../components/Button";
 import { logout } from "../api";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { UserRound } from "lucide-react";
 
 export default function Navbar() {
   const user = useUserStore((state) => state.user);
@@ -47,12 +48,18 @@ export default function Navbar() {
           </span>
           <span className="text-xs text-gray-500">{user?.email}</span>
         </div>
-        <div className="rounded-full w-12 h-12 overflow-hidden">
-          {user && (
+        <div
+          className={`rounded-full w-12 h-12 overflow-hidden flex justify-center items-center ${
+            !user?.profilePicture?.url ? "border-[3px] border-primary" : ""
+          }`}
+        >
+          {user?.profilePicture?.url ? (
             <img
               src={user.profilePicture.url.replace("/upload", `/upload/w_150`)}
               alt="profile-pic"
             />
+          ) : (
+            <UserRound className="w-8 h-8" />
           )}
         </div>
       </div>

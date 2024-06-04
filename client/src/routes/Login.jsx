@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import TextField from "../components/TextField";
 import Button from "../components/Button";
 import CheckBox from "../components/CheckBox";
@@ -10,6 +10,7 @@ import useUserStore from "../hooks/useUserStore";
 import { getUser } from "../api";
 import { useAnimate } from "framer-motion";
 import joi from "joi";
+import { UserRound, Pencil } from "lucide-react";
 
 export default function Login() {
   const [agreed, setAgreed] = useState(false);
@@ -20,6 +21,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [code, setCode] = useState("");
   const [disabled, setDisabled] = useState(false);
+  let cloudinaryRef = useRef();
+  let uploadWidgetRef = useRef();
   const [validationError, setValidationError] = useState({
     email: "",
     password: "",
@@ -34,6 +37,7 @@ export default function Login() {
     password: "",
     name: "",
     confirmPassword: "",
+    profilePicture: { url: "" },
   });
 
   const handleAgreedChange = () => {
@@ -54,6 +58,8 @@ export default function Login() {
     if (!err.response || err.code === "ERR_NETWORK") {
       toast.error(err.message);
       toast.error("Server Unavailable");
+    } else if (err.response.status === 500) {
+      toast.error("Internal Server Error. Please try again later");
     } else if (err.response?.data?.error) {
       switch (err.response.data.error) {
         case "USER_ALREADY_EXISTS":
@@ -76,6 +82,7 @@ export default function Login() {
           break;
 
         default:
+          toast.error("Oops! Something went wrong. Please try again");
           break;
       }
     } else {
@@ -101,6 +108,18 @@ export default function Login() {
         setValidationError((prev) => ({
           ...prev,
           password: err.message,
+        }));
+        break;
+      case "profilePicture":
+        setValidationError((prev) => ({
+          ...prev,
+          serverError: "Profile Picuture is required",
+        }));
+        break;
+      case "url":
+        setValidationError((prev) => ({
+          ...prev,
+          serverError: "Profile Picuture is required",
         }));
         break;
 
@@ -142,12 +161,6 @@ export default function Login() {
           const data = await SignUp(userData);
           setUser(data);
           toast.success("Account created successfully");
-          navigate("/");
-          setLoading(false);
-        } else {
-          const data = await SignIn(userData);
-          setUser(data);
-          toast.success("Successfully Logged In");
           setLoading(false);
           animate(
             scope.current,
@@ -156,6 +169,12 @@ export default function Login() {
             },
             { ease: "easeOut", duration: 0.8 }
           );
+        } else {
+          const data = await SignIn(userData);
+          setUser(data);
+          toast.success("Successfully Logged In");
+          setLoading(false);
+          navigate("/");
         }
       } else {
         setLoading(false);
@@ -206,10 +225,38 @@ export default function Login() {
           handleError(err);
         }
       });
+    cloudinaryRef.current = window.cloudinary;
+    uploadWidgetRef.current = cloudinaryRef.current.createUploadWidget(
+      {
+        cloudName: "dphpgb4hg",
+        uploadPreset: "x4jdqunx",
+        multiple: false,
+      },
+      (error, result) => {
+        if (error) toast.error("Something went wrong. Please try again");
+        else {
+          if (result.event === "queues-end") {
+            toast.success("Image uploaded successfully");
+            setUserData((prev) => ({
+              ...prev,
+              profilePicture: {
+                url: result.info.files[0].uploadInfo.secure_url,
+              },
+            }));
+          }
+        }
+      }
+    );
   }, []);
 
   useEffect(() => {
-    setUserData({ email: "", password: "", name: "", confirmPassword: "" });
+    setUserData({
+      email: "",
+      password: "",
+      name: "",
+      confirmPassword: "",
+      profilePicture: { url: "" },
+    });
     if (location.pathname === "/user/sign-up") {
       setLogin(false);
     }
@@ -222,7 +269,7 @@ export default function Login() {
     <div className="flex w-screen h-screen text-gray-300 bg-secondary-300 justify-center urbanist items-center">
       <div className="bg-secondary-200 border border-gray-800 max-w-[500px] p-16 rounded-md">
         <div className="overflow-hidden  w-full">
-          <div ref={scope} className="flex">
+          <div ref={scope} className="flex items-center">
             <div id="login-signup" className="min-w-[370px]">
               <div className="mb-8 flex flex-col space-y-2">
                 <h1 className="text-4xl font-bold w-full text-left text-primary">
@@ -249,6 +296,39 @@ export default function Login() {
                         Login
                       </Link>
                     </>
+                  )}
+                </div>
+              </div>
+              <div>
+                <label htmlFor="">Upload Profile Picture</label>
+                <div className="w-full flex justify-center">
+                  {!login && (
+                    <div className="relative rounded-full overflow-hidden flex justify-center items-center border-4 border-primary">
+                      {userData.profilePicture.url ? (
+                        <img
+                          src={userData.profilePicture?.url.replace(
+                            "/upload",
+                            `/upload/w_150`
+                          )}
+                          className=" w-20 h-20 object-cover"
+                          alt="profile-pic"
+                        />
+                      ) : (
+                        <>
+                          <UserRound className="text-primary w-20 h-20" />
+                        </>
+                      )}
+                      <Pencil
+                        onClick={() => {
+                          uploadWidgetRef.current.open();
+                          setValidationError((prev) => ({
+                            ...prev,
+                            serverError: "",
+                          }));
+                        }}
+                        className="absolute opacity-0 transition-all duration-600 hover:opacity-100 bg-[rgba(0,0,0,.2)]"
+                      />
+                    </div>
                   )}
                 </div>
               </div>
@@ -337,10 +417,10 @@ export default function Login() {
             </div>
             <div
               id="verification"
-              className="min-w-[370px] min-h-full ml-24 flex flex-col items-center space-y-12 "
+              className="min-w-[370px] min-h-full ml-24 flex flex-col items-center space-y-6 "
             >
-              <div className="spcae-y-2 flex flex-col justify-center">
-                <h2 className="text-2xl text-center text-primary">
+              <div className="spcae-y-2 flex flex-col justify-center space-y-16">
+                <h2 className="text-center text-7xl text-primary">
                   Welcome to BrainOp
                 </h2>
                 <p className="text-center">
@@ -351,7 +431,7 @@ export default function Login() {
 
               <div className="flex mt-16 flex-col justify-center">
                 <TextField
-                  label="Enter Otp"
+                  label="Enter OTP"
                   value={code}
                   disabled={disabled}
                   onChange={handleOtpChange}

@@ -40,7 +40,8 @@ export const signUpSchema = joi.object({
     })
     .required(),
   confirmPassword: joi.string().required(),
-  profilePicture: joi.object({ url: joi.string().required() }),
+
+  profilePicture: joi.object({ url: joi.string().required() }).required(),
 });
 export const loginSchema = joi
   .object({

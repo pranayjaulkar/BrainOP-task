@@ -10,10 +10,6 @@ const JWT_SECRET = process.env.JWT_SECRET || "jwtsecret";
  *
  * @throws Will throw an error if the JWT_SECRET environment variable is not set.
  *
- * @example
- * const user = { id: 123 };
- * const token = createToken(user);
- * console.log(token); // Output: <JWT token>
  */
 module.exports.createToken = (user) => {
   //create jsonwebtoken
@@ -35,14 +31,6 @@ module.exports.createToken = (user) => {
  * @param {Date} expiresIn - The expiration date of the cookie. Default is 7 days from the current date.
  * @returns {Object} - The response object with the added cookie.
  *
- * @throws Will throw an error if the NODE_ENV environment variable is not set to "production" and secure option is set to true.
- *
- * @example
- * const res = // initialize response object
- * const jsonWebToken = "<JWT token>";
- * const expiresIn = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
- * const responseWithCookie = createAndAddCookie(res, jsonWebToken, expiresIn);
- * console.log(responseWithCookie); // Output: <Response object with added cookie>
  */
 module.exports.createAndAddCookie = (
   res,
