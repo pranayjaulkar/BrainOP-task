@@ -268,13 +268,13 @@ export default function Login() {
 
   return (
     <div className="flex w-screen h-screen text-gray-300 bg-secondary-300 justify-center urbanist items-center">
-      <div className="bg-secondary-200 border border-gray-800 max-w-[400px] md:max-w-[600px] xl:max-w-[500px] p-8 md:p-16 rounded-md">
+      <div className="bg-secondary-200 border border-gray-800 max-w-[300px] md:max-w-[600px] xl:max-w-[500px] p-8 md:p-16 rounded-md">
         <div className="overflow-hidden w-full">
           <div ref={scope} className="flex items-center">
             <div
               id="login-signup"
               ref={loginComponentRef}
-              className="min-w-[334px] md:min-w-[470px] xl:min-w-[370px]"
+              className="min-w-[234px] md:min-w-[470px] xl:min-w-[370px]"
             >
               <div className="mb-8 flex flex-col space-y-2">
                 <h1 className="text-4xl font-bold w-full text-left text-primary">
@@ -305,7 +305,7 @@ export default function Login() {
                 </div>
               </div>
               <div>
-                {!login && <label htmlFor="">Upload Profile Picture</label>}
+                {!login && <label>Upload Profile Picture</label>}
                 <div className="w-full flex justify-center">
                   {!login && (
                     <div className="relative rounded-full overflow-hidden flex justify-center items-center border-4 border-primary">
